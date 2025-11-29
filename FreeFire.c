@@ -8,7 +8,6 @@
 // Este programa simula o gerenciamento avançado de uma mochila com componentes coletados durante a fuga de uma ilha.
 // Ele introduz ordenação com critérios e busca binária para otimizar a gestão dos recursos.
 
-int main() {
     // Menu principal com opções:
     // 1. Adicionar um item
     // 2. Remover um item
@@ -19,9 +18,6 @@ int main() {
 
     // A estrutura switch trata cada opção chamando a função correspondente.
     // A ordenação e busca binária exigem que os dados estejam bem organizados.
-
-    return 0;
-}
 
 // Struct Item:
 // Representa um componente com nome, tipo, quantidade e prioridade (1 a 5).
@@ -68,3 +64,107 @@ int main() {
 // Realiza busca binária por nome, desde que a mochila esteja ordenada por nome.
 // Se encontrar, exibe os dados do item buscado.
 // Caso contrário, informa que não encontrou o item.
+
+#define MAX_ITENS 10
+
+// Estrutura que representa um item da mochila
+struct Item {
+    char nome[50];
+    char tipo[30];
+    int quantidade;
+};
+
+int main() {
+    struct Item mochila[MAX_ITENS];
+    int totalItens = 0;
+    int opcao;
+
+    do {
+        printf("\n===== MOCHILA DO SOBREVIVENTE – NIVEL NOVATO =====\n");
+        printf("1. Adicionar item\n");
+        printf("2. Remover item\n");
+        printf("3. Listar itens\n");
+        printf("4. Sair\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+
+        // ------------------------------ ADICIONAR ITEM
+        case 1:
+            if (totalItens >= MAX_ITENS) {
+                printf("\n Mochila cheia! Não eh possivel adicionar mais itens.\n");
+            } else {
+                printf("\n--- Adicionando novo item ---\n");
+                printf("Nome do item: ");
+                scanf(" %49[^\n]", mochila[totalItens].nome);
+
+                printf("Tipo do item: ");
+                scanf(" %29[^\n]", mochila[totalItens].tipo);
+
+                printf("Quantidade: ");
+                scanf("%d", &mochila[totalItens].quantidade);
+
+                totalItens++;
+                printf("\n Item adicionado com sucesso!\n");
+            }
+            break;
+
+        // ------------------------------ REMOVER ITEM
+        case 2:
+            if (totalItens == 0) {
+                printf("\n A mochila está vazia! Nada para remover.\n");
+            } else {
+                char nomeRemover[50];
+                int encontrado = 0;
+
+                printf("\nNome do item a remover: ");
+                scanf(" %49[^\n]", nomeRemover);
+
+                for (int i = 0; i < totalItens; i++) {
+                    if (strcmp(mochila[i].nome, nomeRemover) == 0) {
+                        // Substitui o item removido pelo último da lista
+                        mochila[i] = mochila[totalItens - 1];
+                        totalItens--;
+                        encontrado = 1;
+                        printf("\n Item removido com sucesso!\n");
+                        break;
+                    }
+                }
+
+                if (!encontrado) {
+                    printf("\n Item não encontrado!\n");
+                }
+            }
+            break;
+
+        // ------------------------------ LISTAR ITENS
+        case 3:
+            if (totalItens == 0) {
+                printf("\n📭 A mochila esta vazia!\n");
+            } else {
+                printf("\n===== ITENS NA MOCHILA =====\n");
+                printf("%-20s %-15s %-10s\n", "Nome", "Tipo", "Quantidade");
+                printf("---------------------------------------------\n");
+                for (int i = 0; i < totalItens; i++) {
+                    printf("%-20s %-15s %-10d\n",
+                           mochila[i].nome,
+                           mochila[i].tipo,
+                           mochila[i].quantidade);
+                }
+            }
+            break;
+
+        // ------------------------------ SAIR
+        case 4:
+            printf("\nEncerrando o programa...\n");
+            break;
+
+        default:
+            printf("\n Opçao inválida! Tente novamente.\n");
+        }
+
+    } while (opcao != 4);
+
+    return 0;
+}
