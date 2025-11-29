@@ -80,17 +80,21 @@ int main() {
     int opcao;
 
     do {
-        printf("\n===== MOCHILA DO SOBREVIVENTE – NIVEL NOVATO =====\n");
+        printf("\n===== MOCHILA DO SOBREVIVENTE – NIVEL NOVATO/ AVENTUREIRO =====\n");
         printf("1. Adicionar item\n");
         printf("2. Remover item\n");
         printf("3. Listar itens\n");
-        printf("4. Sair\n");
+        printf("4. Buscar item pelo nome\n");
+        printf("5. Atualizar a quantidade de um item\n");
+        printf("6. Mostrar total geral de itens\n");
+        printf("7. Limpar mochila\n");
+        printf("8. Sair\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
 
         switch (opcao) {
 
-        // ------------------------------ ADICIONAR ITEM
+        // ADICIONAR ITEM
         case 1:
             if (totalItens >= MAX_ITENS) {
                 printf("\n Mochila cheia! Não eh possivel adicionar mais itens.\n");
@@ -110,7 +114,7 @@ int main() {
             }
             break;
 
-        // ------------------------------ REMOVER ITEM
+        // REMOVER ITEM
         case 2:
             if (totalItens == 0) {
                 printf("\n A mochila está vazia! Nada para remover.\n");
@@ -138,10 +142,10 @@ int main() {
             }
             break;
 
-        // ------------------------------ LISTAR ITENS
+        // LISTAR ITENS
         case 3:
             if (totalItens == 0) {
-                printf("\n📭 A mochila esta vazia!\n");
+                printf("\n A mochila esta vazia!\n");
             } else {
                 printf("\n===== ITENS NA MOCHILA =====\n");
                 printf("%-20s %-15s %-10s\n", "Nome", "Tipo", "Quantidade");
@@ -155,16 +159,85 @@ int main() {
             }
             break;
 
-        // ------------------------------ SAIR
+        // BUSCAR ITEM PELO NOME
         case 4:
+               if (totalItens == 0) {
+                printf("\n Mochila vazia! Nada para buscar.\n");
+            } else {
+                char nomeBusca[50];
+                int achou = 0;
+
+                printf("\nDigite o nome do item para buscar: ");
+                scanf(" %49[^\n]", nomeBusca);
+
+                for (int i = 0; i < totalItens; i++) {
+                    if (strcmp(mochila[i].nome, nomeBusca) == 0) {
+                        printf("\n Item encontrado!\n");
+                        printf("Nome: %s\n", mochila[i].nome);
+                        printf("Tipo: %s\n", mochila[i].tipo);
+                        printf("Quantidade: %d\n", mochila[i].quantidade);
+                        achou = 1;
+                        break;
+                    }
+                }
+
+                if (!achou)
+                    printf("\n Item nao encontrado!\n");
+            }
+            break;
+
+        // ATUALIZAR QUANTIDADE
+        case 5:
+            if (totalItens == 0) {
+                printf("\n Não ha itens para atualizar.\n");
+            } else {
+                char nomeAtualizar[50];
+                int achou = 0;
+
+                printf("\nDigite o nome do item para atualizar: ");
+                scanf(" %49[^\n]", nomeAtualizar);
+
+                for (int i = 0; i < totalItens; i++) {
+                    if (strcmp(mochila[i].nome, nomeAtualizar) == 0) {
+                        printf("Nova quantidade: ");
+                        scanf("%d", &mochila[i].quantidade);
+                        printf("\n Quantidade atualizada com sucesso!\n");
+                        achou = 1;
+                        break;
+                    }
+                }
+
+                if (!achou)
+                    printf("\n Item nao encontrado!\n");
+            }
+            break;
+
+        // TOTAL GERAL DE ITENS
+        case 6: {
+            int soma = 0;
+            for (int i = 0; i < totalItens; i++)
+                soma += mochila[i].quantidade;
+
+            printf("\n Total geral de itens na mochila: %d\n", soma);
+            break;
+        }
+
+        // LIMPAR MOCHILA
+        case 7:
+            totalItens = 0;
+            printf("\n Mochila limpa com sucesso!\n");
+            break;
+
+        // SAIR
+        case 8:
             printf("\nEncerrando o programa...\n");
             break;
 
         default:
-            printf("\n Opçao inválida! Tente novamente.\n");
+            printf("\n Opcao invalida! Tente novamente.\n");
         }
 
-    } while (opcao != 4);
+    } while (opcao != 8);
 
     return 0;
 }
