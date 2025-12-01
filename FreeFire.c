@@ -98,26 +98,26 @@ const char* textoRaridade(int r) {
 }
 
 // Função de ordenação por nome
-void ordenarPorNome(struct Item mochila[], int total) {
-    for (int i = 0; i < total - 1; i++) {
-        for (int j = 0; j < total - i - 1; j++) {
+void ordenarPorNome(struct Item mochila[], int quantidadeTotalItens) {
+    for (int i = 0; i < quantidadeTotalItens - 1; i++) {
+        for (int j = 0; j < quantidadeTotalItens- i - 1; j++) {
             if (strcmp(mochila[j].nome, mochila[j + 1].nome) > 0) {
-                struct Item temp = mochila[j];
+                struct Item temporario = mochila[j];
                 mochila[j] = mochila[j + 1];
-                mochila[j + 1] = temp;
+                mochila[j + 1] = temporario;
             }
         }
     }
 }
 
 // Função de ordenação por tipo
-void ordenarPorTipo(struct Item mochila[], int total) {
-    for (int i = 0; i < total - 1; i++) {
-        for (int j = 0; j < total - i - 1; j++) {
+void ordenarPorTipo(struct Item mochila[], int quantidadeTotalItens) {
+    for (int i = 0; i < quantidadeTotalItens - 1; i++) {
+        for (int j = 0; j < quantidadeTotalItens - i - 1; j++) {
             if (strcmp(mochila[j].tipo, mochila[j + 1].tipo) > 0) {
-                struct Item temp = mochila[j];
+                struct Item temporario = mochila[j];
                 mochila[j] = mochila[j + 1];
-                mochila[j + 1] = temp;
+                mochila[j + 1] = temporario;
             }
         }
     }
@@ -126,8 +126,8 @@ void ordenarPorTipo(struct Item mochila[], int total) {
 
 int main() {
     struct Item mochila[MAX_ITENS];
-    int totalItens = 0;
-    int opcao;
+    int quantidadeTotalItens = 0;
+    int opcaoEscolhida;
 
     do {
         printf("\n===== MOCHILA DO SOBREVIVENTE – NIVEL NOVATO, AVENTUREIRO E MESTRE =====\n");
@@ -145,51 +145,53 @@ int main() {
         printf("12. Carregar mochila do arquivo\n");
         printf("13. Sair\n");
         printf("Escolha uma opcao: ");
-        scanf("%d", &opcao);
+        scanf("%d", &opcaoEscolhida);
 
-        switch (opcao) {
+        switch (opcaoEscolhida) {
 
         // ADICIONAR ITEM
         case 1:
-            if (totalItens >= MAX_ITENS) {
+            if (quantidadeTotalItens >= MAX_ITENS) {
                 printf("\n Mochila cheia! Não eh possivel adicionar mais itens.\n");
             } else {
                 printf("\n--- Adicionando novo item ---\n");
+
                 printf("Nome do item: ");
-                scanf(" %49[^\n]", mochila[totalItens].nome);
+                scanf(" %49[^\n]", mochila[quantidadeTotalItens].nome);
 
                 printf("Tipo do item: ");
-                scanf(" %29[^\n]", mochila[totalItens].tipo);
+                scanf(" %29[^\n]", mochila[quantidadeTotalItens].tipo);
 
                 printf("Quantidade: ");
-                scanf("%d", &mochila[totalItens].quantidade);
+                scanf("%d", &mochila[quantidadeTotalItens].quantidade);
 
                 printf("Raridade (0-Comum, 1-Incomum, 2-Raro, 3-Epico, 4-Lendario): ");
-                scanf("%d", (int*)&mochila[totalItens].raridade);
+                scanf("%d", (int*)&mochila[quantidadeTotalItens].raridade);
 
-                totalItens++;
+                quantidadeTotalItens++;
                 printf("\n Item adicionado com sucesso!\n");
             }
             break;
 
         // REMOVER ITEM
         case 2: {
-            char nome[50];
+            char nomeDoItemRemover[50];
             printf("\nNome do item a remover: ");
-            scanf(" %49[^\n]", nome);
+            scanf(" %49[^\n]", nomeDoItemRemover);
 
-            int achou = 0;
-            for (int i = 0; i < totalItens; i++) {
-                if (strcmp(mochila[i].nome, nome) == 0) {
-                    mochila[i] = mochila[totalItens - 1];
-                    totalItens--;
-                    achou = 1;
+            bool itemFoiEncontrado = false;
+
+            for (int i = 0; i < quantidadeTotalItens; i++) {
+                if (strcmp(mochila[i].nome, nomeDoItemRemover) == 0) {
+                    mochila[i] = mochila[quantidadeTotalItens - 1];
+                    quantidadeTotalItens--;
+                    itemFoiEncontrado = true;
                     printf("Item removido!\n");
                     break;
                 }
             }
 
-            if (!achou)
+            if (!itemFoiEncontrado)
                 printf("Item não encontrado!\n");
 
             break;
@@ -197,7 +199,7 @@ int main() {
             
         // LISTAR ITENS
         case 3:
-    if (totalItens == 0) {
+    if (quantidadeTotalItens == 0) {
         printf("\n A mochila está vazia!\n");
     } else {
         printf("\n===== ITENS NA MOCHILA =====\n");
@@ -205,7 +207,7 @@ int main() {
                "Nome", "Tipo", "Quantidade", "Raridade");
         printf("---------------------------------------------------------\n");
 
-        for (int i = 0; i < totalItens; i++) {
+        for (int i = 0; i < quantidadeTotalItens; i++) {
             printf("%-20s %-15s %-12d %-10s\n",
                    mochila[i].nome,
                    mochila[i].tipo,
@@ -217,94 +219,96 @@ int main() {
 
         // BUSCAR ITEM PELO NOME
         case 4: {
-            char nome[50];
+            char nomeDoItemBuscado[50];
             printf("\nDigite o nome do item para buscar: ");
-            scanf(" %49[^\n]", nome);
+            scanf(" %49[^\n]", nomeDoItemBuscado);
                
-
-            int achou = 0;
-            for (int i = 0; i < totalItens; i++) {
-                    if (strcmp(mochila[i].nome, nome) == 0) {
+            bool itemFoiEncontrado = false;
+            
+            for (int i = 0; i < quantidadeTotalItens; i++) {
+                    if (strcmp(mochila[i].nome, nomeDoItemBuscado) == 0) {
                         printf("\nItem encontrado!\n");
                         printf("Nome: %s\n", mochila[i].nome);
                         printf("Tipo: %s\n", mochila[i].tipo);
                         printf("Quantidade: %d\n", mochila[i].quantidade);
                         printf("Raridade: %s\n", textoRaridade(mochila[i].raridade));
-                        achou = 1;
+                        itemFoiEncontrado = true;
                         break;
                     }
                 }
 
-                if (!achou)
-                    printf("\n Item nao encontrado!\n");
+                if (!itemFoiEncontrado)
+                    printf("\n Item não encontrado!\n");
             }
             break;
 
         // ATUALIZAR QUANTIDADE
         case 5: {
-            char nome[50];
+            char nomeDoItemAtualizar[50];
             printf("\nNome do item: ");
-            scanf(" %49[^\n]", nome);
+            scanf(" %49[^\n]", nomeDoItemAtualizar);
             
-            int achou = 0;
-            for (int i = 0; i < totalItens; i++) {
-                if (strcmp(mochila[i].nome, nome) == 0) {
+            bool itemFoiEncontrado = false;
+
+            for (int i = 0; i < quantidadeTotalItens; i++) {
+                if (strcmp(mochila[i].nome, nomeDoItemAtualizar) == 0) {
                         printf("Nova quantidade: ");
                         scanf("%d", &mochila[i].quantidade);
                         printf("\n Quantidade atualizada com sucesso!\n");
-                        achou = 1;
+                        itemFoiEncontrado = true;
                         break;
                     }
                 }
-                if (!achou)
-                    printf("\n Item nao encontrado!\n");
+                if (!itemFoiEncontrado)
+                    printf("\n Item não encontrado!\n");
             
             break;
         }
 
         // TOTAL GERAL DE ITENS
         case 6: {
-            int soma = 0;
-            for (int i = 0; i < totalItens; i++)
-                soma += mochila[i].quantidade;
+            int somaTotalDeItens = 0;
 
-            printf("\n Total geral de itens na mochila: %d itens\n", soma);
+            for (int i = 0; i < quantidadeTotalItens; i++)
+                somaTotalDeItens += mochila[i].quantidade;
+
+            printf("\n Total geral de itens na mochila: %d itens\n", somaTotalDeItens);
             break;
         }
 
         // LIMPAR MOCHILA
         case 7:
-            totalItens = 0;
+            quantidadeTotalItens = 0;
             printf("\n Mochila limpa com sucesso!\n");
             break;
 
         // ORDENAR POR NOME
         case 8:
-            ordenarPorNome(mochila, totalItens);
-            printf("\nOrdenado por nome!\n");
+            ordenarPorNome(mochila, quantidadeTotalItens);
+            printf("\nItens ordenados por nome!\n");
             break;
         
         // ORDENAR POR TIPO
         case 9: 
-            ordenarPorTipo(mochila, totalItens);
-            printf("\nOrdenar por tipo!\n");
+            ordenarPorTipo(mochila, quantidadeTotalItens);
+            printf("\nItens ordenar por tipo!\n");
             break;
         
         // FILTRAR POR RARIDADE
         case 10: {
-            int raridadeEscolhida;
+            int raridadeSelecionada;
 
             printf("\nEscolha uma raridade (0 a 4): ");
-            scanf("%d", &raridadeEscolhida);
+            scanf("%d", &raridadeSelecionada);
 
-            printf("\nItens da raridade %s:\n", textoRaridade(raridadeEscolhida));
+            printf("\nItens da raridade %s:\n", textoRaridade(raridadeSelecionada));
 
-            for (int indiceItem = 0; indiceItem < totalItens; indiceItem++) {
-                if (mochila[indiceItem].raridade == raridadeEscolhida) {
+            for (int indiceDoItem = 0; indiceDoItem < quantidadeTotalItens; indiceDoItem++) {
+                if (mochila[indiceDoItem].raridade == raridadeSelecionada) {
                     printf("- %s (%s) x%d\n",
-                            mochila[indiceItem].nome,
-                            mochila[indiceItem].tipo,
-                            mochila[indiceItem].quantidade);
+                            mochila[indiceDoItem].nome,
+                            mochila[indiceDoItem].tipo,
+                            mochila[indiceDoItem].quantidade);
                 }
             }
             break;
@@ -312,51 +316,52 @@ int main() {
         
         // SALVAR EM ARQUIVO
         case 11: {
-            FILE *arquivoMochila = fopen("mochila.txt", "w");
-            if (!arquivoMochila) {
+            FILE *arquivoDaMochila = fopen("mochila.txt", "w");
+
+            if (!arquivoDaMochila) {
                 printf("Erro ao criar arquivo!\n");
                 break;
             }
 
-            fprintf(arquivoMochila, "%d\n", totalItens);
+            fprintf(arquivoDaMochila, "%d\n", quantidadeTotalItens);
 
-            for (int indiceItem = 0; indiceItem < totalItens; indiceItem++) {
-                fprintf(arquivoMochila, "%s;%s;%d;%d\n",
-                        mochila[indiceItem].nome,
-                        mochila[indiceItem].tipo,
-                        mochila[indiceItem].quantidade,
-                        mochila[indiceItem].raridade);                      
+            for (int indiceDoItem = 0; indiceDoItem < quantidadeTotalItens; indiceDoItem++) {
+                fprintf(arquivoDaMochila, "%s;%s;%d;%d\n",
+                        mochila[indiceDoItem].nome,
+                        mochila[indiceDoItem].tipo,
+                        mochila[indiceDoItem].quantidade,
+                        mochila[indiceDoItem].raridade);                      
             }
 
-            fclose(arquivoMochila);
+            fclose(arquivoDaMochila);
             printf("\nArquivo salvo com sucesso!\n");
             break;
         }
         
         // CARREGAR EM ARQUIVO
         case 12: {
-            FILE *arquivoMochila = fopen("mochila.text", "r");
-            if (!arquivoMochila) {
+            FILE *arquivoDaMochila = fopen("mochila.text", "r");
+            if (!arquivoDaMochila) {
                 printf("Arquivo não encontrado!\n");
                 break;
             }
 
-            fscanf(arquivoMochila, "%d\n", &totalItens);
+            fscanf(arquivoDaMochila, "%d\n", &quantidadeTotalItens);
 
-            for (int indiceItem = 0; indiceItem < totalItens; indiceItem++) {
-                fscanf(arquivoMochila, "%49[^;];%29[^;];%d;%d\n",
-                       mochila[indiceItem].nome,
-                       mochila[indiceItem].tipo,
-                       &mochila[indiceItem].quantidade,
-                       (int*)&mochila[indiceItem].raridade);         
+            for (int indiceDoItem = 0; indiceDoItem < quantidadeTotalItens; indiceDoItem++) {
+                fscanf(arquivoDaMochila, "%49[^;];%29[^;];%d;%d\n",
+                       mochila[indiceDoItem].nome,
+                       mochila[indiceDoItem].tipo,
+                       &mochila[indiceDoItem].quantidade,
+                       (int*)&mochila[indiceDoItem].raridade);         
             }
 
-            fclose(arquivoMochila);
+            fclose(arquivoDaMochila);
             printf("\nMochila carregada!\n");
             break;
             
         }
-
+        // SAIR
         case 13:
             printf("\nEncerrando o programa...\n");
             break;
@@ -365,7 +370,7 @@ int main() {
             printf("\n Opção inválida! Tente novamente.\n");
         }
 
-    } while (opcao != 13);
+    } while (opcaoEscolhida != 13);
 
     return 0;
 }
